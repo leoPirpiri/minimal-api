@@ -6,11 +6,16 @@ namespace MinimalApi.Infraestrutura.Db;
 public class DbContexto : DbContext
 {
     private readonly IConfiguration _configurationAppSettings;
+
     public DbContexto(IConfiguration configurationAppSettings)
     {
         _configurationAppSettings = configurationAppSettings;
     }
+
     public DbSet<Administrador> Administradores { get; set; } = default!;
+
+    public DbSet<Veiculo> Veiculos { get; set; } = default!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Administrador>().HasData(
@@ -23,6 +28,7 @@ public class DbContexto : DbContext
             }
         );
     }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
