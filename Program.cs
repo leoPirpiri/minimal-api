@@ -79,6 +79,15 @@ app.MapPut("/veiculos/{id}", ([FromRoute] int id, [FromBody] VeiculoDTO veiculoD
     veiculoServico.Atualizar(veiculo);
     return Results.Ok(veiculo);
 }).WithTags("Veículos");
+
+app.MapDelete("/veiculos/{id}", ([FromRoute] int id, IVeiculoServico veiculoServico) =>
+{
+    var veiculo = veiculoServico.BuscarPorId(id);
+    if (veiculo is null) return Results.NotFound();
+
+    veiculoServico.Apagar(veiculo);
+    return Results.NoContent();
+}).WithTags("Veículos");
 #endregion
 
 #region App and Swagger
