@@ -5,8 +5,8 @@ using MinimalApi.Dominio.Entidades;
 using MinimalApi.Dominio.Interfaces;
 using MinimalApi.Dominio.ModelViews;
 using MinimalApi.Dominio.Servicos;
-using MinimalApi.DTOs;
 using MinimalApi.Infraestrutura.Db;
+using MinimalApi.Dominio.Enuns;
 #region Builder
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +40,48 @@ app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministra
     }
     return Results.Unauthorized();
 }).WithTags("Administração");
+
+app.MapPost("/administradores", ([FromBody] AdministradorDTO administradorDTO, IAdministradorServico administradorServico) =>
+{
+    var validacao = new ErrosDeValidacao { Mensagens = new List<string>() };
+    if (string.IsNullOrEmpty(administradorDTO.Email))
+    {
+        validacao.Mensagens.Add("O email é obrigatório.");
+    }
+    if (string.IsNullOrEmpty(administradorDTO.Senha))
+    {
+        validacao.Mensagens.Add("A senha é obrigatória.");
+    }
+    if (administradorDTO.Perfil == null)
+    {
+        validacao.Mensagens.Add("O perfil é obrigatório.");
+    }
+    if (validacao.Mensagens.Count > 0)
+    {
+        return Results.BadRequest(validacao);
+    }
+    var administrador = new Administrador
+    {
+        Email = administradorDTO.Email,
+        Senha = administradorDTO.Senha,
+        Perfil = administradorDTO.Perfil.ToString() ?? Perfil.editor.ToString()
+    };
+
+    administradorServico.Incluir(administrador);
+    return Results.Created($"/administradores/{administrador.Id}", administrador);
+}).WithTags("Administração");
+
+app.MapGet("/administradores", ([FromQuery] int? pagina, IAdministradorServico administradorServico) =>
+{
+    return Results.Ok(administradorServico.Todos(pagina));
+}).WithTags("Administração");
+
+app.MapGet("/administradores/{id}", ([FromRoute] int id, IAdministradorServico administradorServico) =>
+{
+    var administrador = administradorServico.BuscarPorId(id);
+    return administrador is not null ? Results.Ok(administrador) : Results.NotFound();
+}).WithTags("Administração");
+
 #endregion
 
 #region Veiculos
@@ -81,8 +123,7 @@ app.MapPost("/veiculos", ([FromBody] VeiculoDTO veiculoDTO, IVeiculoServico veic
 
 app.MapGet("/veiculos", ([FromQuery] int? pagina, IVeiculoServico veiculoServico) =>
 {
-    var veiculos = veiculoServico.Todos(pagina);
-    return Results.Ok(veiculos);
+    return Results.Ok(veiculoServico.Todos(pagina));
 }).WithTags("Veículos");
 
 app.MapGet("/veiculos/{id}", ([FromRoute] int id, IVeiculoServico veiculoServico) =>
