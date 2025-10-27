@@ -32,6 +32,17 @@ app.MapGet("/", () => Results.Json(new Home())).WithTags("Home");
 #endregion
 
 #region Administradores
+AdministradorModelView modelarAdministrador(Administrador adm)
+{
+    return new AdministradorModelView
+    {
+        Id = adm.Id,
+        Email = adm.Email,
+        Senha = new string('*', adm.Senha.Length),
+        Perfil = adm.Perfil.ToString()
+    };
+}
+
 app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministradorServico administradorServico) =>
 {
     if (administradorServico.Login(loginDTO) != null)
@@ -64,22 +75,28 @@ app.MapPost("/administradores", ([FromBody] AdministradorDTO administradorDTO, I
     {
         Email = administradorDTO.Email,
         Senha = administradorDTO.Senha,
-        Perfil = administradorDTO.Perfil.ToString() ?? Perfil.editor.ToString()
+        Perfil = administradorDTO.Perfil.ToString() ?? Perfil.Editor.ToString()
     };
 
     administradorServico.Incluir(administrador);
-    return Results.Created($"/administradores/{administrador.Id}", administrador);
+    return Results.Created($"/administradores/{administrador.Id}", modelarAdministrador(administrador));
 }).WithTags("Administração");
 
 app.MapGet("/administradores", ([FromQuery] int? pagina, IAdministradorServico administradorServico) =>
 {
-    return Results.Ok(administradorServico.Todos(pagina));
+    var adms = new List<AdministradorModelView>();
+    foreach (var adm in administradorServico.Todos(pagina))
+    {
+        adms.Add(modelarAdministrador(adm));
+    }
+    return Results.Ok(adms);
 }).WithTags("Administração");
 
 app.MapGet("/administradores/{id}", ([FromRoute] int id, IAdministradorServico administradorServico) =>
 {
-    var administrador = administradorServico.BuscarPorId(id);
-    return administrador is not null ? Results.Ok(administrador) : Results.NotFound();
+    var adm = administradorServico.BuscarPorId(id);
+    if (adm == null) return Results.NotFound();
+    return Results.Ok(modelarAdministrador(adm));
 }).WithTags("Administração");
 
 #endregion
