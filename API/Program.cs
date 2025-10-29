@@ -1,3 +1,28 @@
+using MinimalApi;
+
+IHostBuilder CreateHostBuilder(string[] args)
+{
+    return Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<Startup>();
+            });
+}
+
+CreateHostBuilder(args).Build().Run();
+
+
+
+/*
+
+
+
+
+
+
+
+
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MinimalApi.Dominio.DTOs;
@@ -14,6 +39,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authorization;
+
 #region Builder
 var builder = WebApplication.CreateBuilder(args);
 
@@ -286,3 +312,4 @@ app.UseAuthorization();
 
 app.Run();
 #endregion
+*/
