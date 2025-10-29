@@ -1,4 +1,4 @@
-namespace minimalApi.Dominio.ModelViews
+namespace MinimalApi.Dominio.ModelViews
 {
 
     internal class AdministradorLogado

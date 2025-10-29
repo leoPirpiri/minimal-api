@@ -12,7 +12,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using minimalApi.Dominio.ModelViews;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authorization;
 #region Builder

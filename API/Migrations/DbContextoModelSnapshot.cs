@@ -7,7 +7,7 @@ using MinimalApi.Infraestrutura.Db;
 
 #nullable disable
 
-namespace minimal_api.Migrations
+namespace MinimalApi.Migrations
 {
     [DbContext(typeof(DbContexto))]
     partial class DbContextoModelSnapshot : ModelSnapshot

@@ -8,7 +8,7 @@ using MinimalApi.Infraestrutura.Db;
 
 #nullable disable
 
-namespace minimal_api.Migrations
+namespace MinimalApi.Migrations
 {
     [DbContext(typeof(DbContexto))]
     [Migration("20251025224700_SeedAdministrador")]
